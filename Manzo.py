@@ -159,14 +159,43 @@ def modify_name():
     print("\nLista dei mazzi disponibili")
     decks = read_decks_from_disk()
     print_deck(decks)
-    deck = input("Mazzo da modificare: ").title()
-    new_deck = input("Nuovo nome del mazzo: ").title()
     basepath = Path("Decks\\")
+
+    # chiedere che file si vuole modificare
+    deck_file = int(input("Inserire il numero del mazzo da modificare: "))
+    for deck in print_deck(decks):
+        if deck == deck_file:
+            # chiedere cosa si vuole modificare del file : nome file, nome deck, formato, prezzo
+            print("""1) Nome File
+2) Nome Mazzo
+3) Formato
+4) Prezzo"""
+                  )
+    else:
+        print("selezione non valida")
+
+    question = int(input("Inserire numero per modifica: "))
+    question2 = input("modifica da fare: ")
+
     for file in basepath.iterdir():
         if file.is_file():
-            if file == deck:  # problema da qua
-                file.rename(new_deck)
-                return
+            # cercare della cartella il file
+            if question == 1:
+                file.replace(question2)
+                # se si vuole modificare il nnome del file
+                pass
+            elif question == 2:
+                # se si vuole modificare il nome deck
+                pass
+            elif question == 3:
+                # se si vuole modificare il formato
+                pass
+            elif question == 4:
+                # se si vule modificare il prezzo
+                pass
+
+    deck = input("Mazzo da modificare: ").title()
+    new_deck = input("Nuovo nome del mazzo: ").title()
 
 
 def elabora_scelta_utente(choose):
