@@ -6,7 +6,8 @@ def create_directory():
 
 
 def show_main_menu():
-    menu = """0) Exit
+    menu = """   ---
+0) Exit
 1) View all decks
 2) Collection
 3) Add Deck
@@ -15,7 +16,7 @@ def show_main_menu():
 6) Pionner Decks
 7) Name modify
 8) Search
----"""
+   ---"""
     print(menu)
 
 
@@ -56,8 +57,7 @@ def add_deck():
 
     print("Il mazzo non può valere 0")
     while True:
-        insert_deck = input("Inserisci il nome del mazzo: ")
-        insert_deck = insert_deck.title()
+        insert_deck = input("Inserisci il nome del mazzo: ").title()
         my_deck["nome"] = insert_deck
 
         try:
@@ -155,10 +155,24 @@ def choose_deck(decks, formato):
     return my_list
 
 
+def modify_name():
+    print("\nLista dei mazzi disponibili")
+    decks = read_decks_from_disk()
+    print_deck(decks)
+    deck = input("Mazzo da modificare: ").title()
+    new_deck = input("Nuovo nome del mazzo: ").title()
+    basepath = Path("Decks\\")
+    for file in basepath.iterdir():
+        if file.is_file():
+            if file == deck:  # problema da qua
+                file.rename(new_deck)
+                return
+
+
 def elabora_scelta_utente(choose):
     if choose == 1:
         show_menu1()
-    elif choose == 2 or choose > 6:
+    elif choose == 2 or choose > 8:
         print("scelta al momento non disponibile")
     elif choose == 3:
         add_deck()
@@ -172,6 +186,10 @@ def elabora_scelta_utente(choose):
         decks = read_decks_from_disk()
         format_pioneer = choose_deck(decks, "Pioneer")
         print_deck(format_pioneer)
+    elif choose == 7:
+        modify_name()
+    elif choose == 8:
+        pass
 
 
 while True:
