@@ -6,14 +6,16 @@ def create_directory():
 
 
 def show_main_menu():
-    menu = """1) View all decks
+    menu = """0) Exit
+1) View all decks
 2) Collection
 3) Add Deck
 4) Delete Deck
 5) Modern Decks
 6) Pionner Decks
---
-0) Exit"""
+7) Name modify
+8) Search
+---"""
     print(menu)
 
 
@@ -21,7 +23,7 @@ def exit_mode():
     print("0) Exit")
 
 
-def show_menu1():  # sistemare
+def show_menu1():
     while True:
         print_deck(read_decks_from_disk())
         choose = scelta_utente()
@@ -111,12 +113,15 @@ def read_decks_from_disk():
 def print_deck(decks):
     for index, deck in enumerate(decks, 1):
         print(f"{index}) nome: {deck['nome']}, formato: {deck['formato']}, prezzo: {deck['prezzo']}")
+    print("---")
 
 
 def remove_deck():
     while True:
         print("\nLista dei mazzi disponibili")
-        print_deck(read_decks_from_disk())
+        decks = read_decks_from_disk()
+        print_deck(decks)
+        #           REMOVE BY NAME
         deck_folder = Path("Decks\\")
         delete_deck = input("\nInserisci il numero per togliere il mazzo: ")  # aggiungere int se lo rimetto come prima
         delete_deck = delete_deck.title()
@@ -130,6 +135,7 @@ def remove_deck():
         else:
             print("Mazzo non disponibile")
 
+    #       REMOVE BY INDEX
     # for index, filename in enumerate(deck_folder.iterdir(), 1):
     #     if filename.is_file():
     #         if index == delete_deck:
@@ -141,7 +147,7 @@ def remove_deck():
     #     print("mazzo non disponibile")
 
 
-def choose_deck(decks, formato):            # da sistemare
+def choose_deck(decks, formato):
     my_list = []
     for deck in decks:
         if deck["formato"] == formato:
