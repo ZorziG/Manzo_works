@@ -1,5 +1,5 @@
 from pathlib import Path
-import os
+
 
 def create_directory():
     Path(".\\Decks\\").mkdir(parents=True, exist_ok=True)
@@ -211,33 +211,31 @@ def modify_name():
 3) Formato
 4) Prezzo"""
                       )
-                break
+                question = int(input("Inserire numero per modifica: "))   # problemi con le lettere
+                question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi con i numeri
+                if question == 1:
+                    if index == number_file:
+                        # a = Path("Decks\\" + deck_file.name)  # da sistemare
+                        # print(a.cwd())
+                        # a.replace(question2)
+                        break
+                    # se il file è = al numero selezionato
+                    # file.name.replace(question2)
+            #             # se si vuole modificare il nnome del file
+            #         elif question == 2:
+            #             # se si vuole modificare il nome deck
+            #             pass
+            #         elif question == 3:
+            #             # se si vuole modificare il formato
+            #             pass
+            #         elif question == 4:
+            #             # se si vule modificare il prezzo
+            #             pass
+
     else:
         print("file non disponibile")
         return
 
-    question = int(input("Inserire numero per modifica: "))
-    question2 = input("modifica da fare: ")
-
-    for file in basepath.iterdir():
-        if file.is_file():
-            # cercare della cartella il file
-            if question == 1:
-                # se il file è = al numero selezionato
-                file.name.replace(question2)
-                # se si vuole modificare il nnome del file
-            elif question == 2:
-                # se si vuole modificare il nome deck
-                pass
-            elif question == 3:
-                # se si vuole modificare il formato
-                pass
-            elif question == 4:
-                # se si vule modificare il prezzo
-                pass
-
-    # deck = input("Mazzo da modificare: ").title()
-    # new_deck = input("Nuovo nome del mazzo: ").title()
 
 
 def elabora_scelta_utente(choose):
