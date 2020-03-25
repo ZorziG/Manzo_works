@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 
 def create_directory():
     Path(".\\Decks\\").mkdir(parents=True, exist_ok=True)
@@ -51,15 +51,14 @@ def scelta_utente():
 
 def add_deck():
     my_deck = {}
-    legal_format = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
-    print("\nI Formati disponibili sono:")
-    for index, deck in enumerate(legal_format, 1):
-        print(str(index) + ')', deck)
-
-    print("Il mazzo non può valere 0")
     while True:
         insert_deck = input("Inserisci il nome del mazzo: ").title()
         my_deck["nome"] = insert_deck
+
+        legal_format = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
+        print("\nI Formati disponibili sono:")
+        for index, deck in enumerate(legal_format, 1):
+            print(str(index) + ')', deck)
 
         try:
             add_format = int(input("Inserisci il formato: "))
@@ -75,6 +74,7 @@ def add_deck():
             print("Formato non disponibile")
             continue
 
+        print("Il valore del mazzo non può essere 0")
         try:
             add_price = int(input("Inserisci valore del mazzo: "))
         except ValueError:
@@ -128,19 +128,35 @@ def remove_deck():
         exit_mode()
         decks = read_decks_from_disk()
         print_deck_index(decks)
-        #           REMOVE BY NAME
-        deck_folder = Path("Decks\\")
-        delete_deck = input("\nInserisci il numero per togliere il mazzo: ")  # aggiungere int se lo rimetto come prima
-        delete_deck = delete_deck.title()
-        for deck in deck_folder.iterdir():
-            if deck.is_file():
-                if deck.name == delete_deck:
-                    deck.unlink()
-                    break
-                elif "0" == delete_deck:
-                    return
+        index = int(input('scegli il mazzo il mazzo: '))
+        if index == 0:
+            return
+        try:
+            deck_to_be_deleted = decks[index - 1]
+        except IndexError as e:
+            print('il mazzo non esiste!', e)
         else:
-            print("Mazzo non disponibile")
+            full_file_path = Path('Decks\\' + deck_to_be_deleted['nome'])
+            full_file_path.unlink()
+
+    # while True:
+    #     print("\nLista dei mazzi disponibili")
+    #     exit_mode()
+    #     decks = read_decks_from_disk()
+    #     print_deck_index(decks)
+    #     #           REMOVE BY NAME
+    #     deck_folder = Path("Decks\\")
+    #     delete_deck = input("\nInserisci il numero per togliere il mazzo: ")  # aggiungere int se lo rimetto come prima
+    #     delete_deck = delete_deck.title()
+    #     for deck in deck_folder.iterdir():
+    #         if deck.is_file():
+    #             if deck.name == delete_deck:
+    #                 deck.unlink()
+    #                 break
+    #             elif "0" == delete_deck:
+    #                 return
+    #     else:
+    #         print("Mazzo non disponibile")
 
     #       REMOVE BY INDEX
     # for index, filename in enumerate(deck_folder.iterdir(), 1):
