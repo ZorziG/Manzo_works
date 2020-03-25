@@ -14,7 +14,7 @@ def show_main_menu():
 4) Delete Deck
 5) Modern Decks
 6) Pionner Decks
-7) Name modify
+7) Modify
 8) Search
    ---"""
     print(menu)
@@ -26,7 +26,8 @@ def exit_mode():
 
 def show_menu1():
     while True:
-        print_deck(read_decks_from_disk())
+        exit_mode()
+        print_deck_index(read_decks_from_disk())
         choose = scelta_utente()
         if choose == 0:
             break
@@ -92,7 +93,6 @@ def add_deck():
 
 
 def read_decks_from_disk():
-    exit_mode()
     deck_list = []
     basepath = Path("Decks\\")
 
@@ -110,17 +110,24 @@ def read_decks_from_disk():
     return deck_list
 
 
-def print_deck(decks):
+def print_deck_index(decks):
     for index, deck in enumerate(decks, 1):
         print(f"{index}) nome: {deck['nome']}, formato: {deck['formato']}, prezzo: {deck['prezzo']}")
+    print("---")
+
+
+def print_deck_no_index(decks):
+    for deck in decks:
+        print(f"nome: {deck['nome']}, formato: {deck['formato']}, prezzo: {deck['prezzo']}")
     print("---")
 
 
 def remove_deck():
     while True:
         print("\nLista dei mazzi disponibili")
+        exit_mode()
         decks = read_decks_from_disk()
-        print_deck(decks)
+        print_deck_index(decks)
         #           REMOVE BY NAME
         deck_folder = Path("Decks\\")
         delete_deck = input("\nInserisci il numero per togliere il mazzo: ")  # aggiungere int se lo rimetto come prima
@@ -147,7 +154,7 @@ def remove_deck():
     #     print("mazzo non disponibile")
 
 
-def choose_deck(decks, formato):
+def choose_format_deck(decks, formato):
     my_list = []
     for deck in decks:
         if deck["formato"] == formato:
@@ -155,24 +162,43 @@ def choose_deck(decks, formato):
     return my_list
 
 
+def choose_1_deck(decks, number):
+    my_list = []
+    for index, deck in enumerate(decks, 1):
+        if index == number:
+            my_list.append(deck)
+    return my_list
+
+
 def modify_name():
-    print("\nLista dei mazzi disponibili")
-    decks = read_decks_from_disk()
-    print_deck(decks)
+    print("\nLista dei file disponibili")
+    exit_mode()
     basepath = Path("Decks\\")
 
-    # chiedere che file si vuole modificare
-    deck_file = int(input("Inserire il numero del mazzo da modificare: "))
-    for deck in print_deck(decks):
-        if deck == deck_file:
-            # chiedere cosa si vuole modificare del file : nome file, nome deck, formato, prezzo
-            print("""1) Nome File
+    for index, deck_file in enumerate(basepath.iterdir(), 1):
+        if deck_file.is_file():
+            print(str(index) + ")", deck_file.name)
+
+    number_file = int(input("Inserire il numero del file da modificare: "))
+    for index, deck_file in enumerate(basepath.iterdir(), 1):
+        if deck_file.is_file():
+            if 0 == number_file:
+                return
+            elif index == number_file:
+                print(f"Nome del file: {deck_file.name} ")
+                print("Info deck:")
+                decks = read_decks_from_disk()
+                deck_data = choose_1_deck(decks, index)
+                print_deck_no_index(deck_data)
+                print("""1) Nome File
 2) Nome Mazzo
 3) Formato
 4) Prezzo"""
-                  )
+                      )
+                break
     else:
-        print("selezione non valida")
+        print("file non disponibile")
+        return
 
     question = int(input("Inserire numero per modifica: "))
     question2 = input("modifica da fare: ")
@@ -181,9 +207,9 @@ def modify_name():
         if file.is_file():
             # cercare della cartella il file
             if question == 1:
-                file.replace(question2)
+                # se il file è = al numero selezionato
+                file.name.replace(question2)
                 # se si vuole modificare il nnome del file
-                pass
             elif question == 2:
                 # se si vuole modificare il nome deck
                 pass
@@ -194,8 +220,8 @@ def modify_name():
                 # se si vule modificare il prezzo
                 pass
 
-    deck = input("Mazzo da modificare: ").title()
-    new_deck = input("Nuovo nome del mazzo: ").title()
+    # deck = input("Mazzo da modificare: ").title()
+    # new_deck = input("Nuovo nome del mazzo: ").title()
 
 
 def elabora_scelta_utente(choose):
@@ -209,12 +235,12 @@ def elabora_scelta_utente(choose):
         remove_deck()
     elif choose == 5:
         decks = read_decks_from_disk()
-        format_modern = choose_deck(decks, "Modern")
-        print_deck(format_modern)
+        format_modern = choose_format_deck(decks, "Modern")
+        print_deck_index(format_modern)
     elif choose == 6:
         decks = read_decks_from_disk()
-        format_pioneer = choose_deck(decks, "Pioneer")
-        print_deck(format_pioneer)
+        format_pioneer = choose_format_deck(decks, "Pioneer")
+        print_deck_index(format_pioneer)
     elif choose == 7:
         modify_name()
     elif choose == 8:
