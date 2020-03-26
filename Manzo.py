@@ -243,14 +243,20 @@ def looking_for_a_word():
         for file in basepath.iterdir():
             if file.is_file():
                 with file.open() as deck:
-                    for line in deck:
-                        for w in line.split():
-                            if word == "Exit":
-                                return
-                            elif w == word:
-                                choose_deck = read_decks_from_disk()
-                                show = searched_word(choose_deck, word)
-                                return print_deck_index(show)
+                    if word == "Exit":
+                        return
+                    elif word in deck.read():
+                        choose_deck = read_decks_from_disk()
+                        show = searched_word(choose_deck, word)
+                        return print_deck_index(show)
+                    # for line in deck:
+                    #     for w in line.split():
+                    #         if word == "Exit":
+                    #             return
+                    #         elif w == word:
+                    #             choose_deck = read_decks_from_disk()
+                    #             show = searched_word(choose_deck, word)
+                    #             return print_deck_index(show)
 
         else:
             print("nessuna riscontro trovato")
