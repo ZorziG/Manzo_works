@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-def create_directory():
+def create_directory():  # creare una cartella
     Path(".\\Decks\\").mkdir(parents=True, exist_ok=True)
 
 
@@ -43,7 +43,7 @@ def scelta_utente():
             print("Problema: carettere non disponibile inserire solo numeri")
 
 
-def add_deck():
+def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per linea
     my_deck = {}
     while True:
         insert_deck = input("Inserisci il nome del mazzo: ").title()
@@ -86,7 +86,7 @@ def add_deck():
         break
 
 
-def read_decks_from_disk():
+def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3 linee
     deck_list = []
     basepath = Path("Decks\\")
 
@@ -104,19 +104,19 @@ def read_decks_from_disk():
     return deck_list
 
 
-def print_deck_index(decks):
+def print_deck_index(decks):  # printare i mazzi con l'indice
     for index, deck in enumerate(decks, 1):
         print(f"{index}) nome: {deck['nome']}, formato: {deck['formato']}, prezzo: {deck['prezzo']}")
     print("---")
 
 
-def print_deck_no_index(decks):
+def print_deck_no_index(decks):  # printare mazzi senza indice
     for deck in decks:
         print(f"nome: {deck['nome']}, formato: {deck['formato']}, prezzo: {deck['prezzo']}")
     print("---")
 
 
-def remove_deck():
+def remove_deck():  # rimuovere un file dalla cartella in base al numero del mazzo sul display
     while True:
         print("\nLista dei mazzi disponibili")
         exit_mode()
@@ -145,7 +145,7 @@ def remove_deck():
     #     print("mazzo non disponibile")
 
 
-def choose_format_deck(decks, formato):
+def choose_format_deck(decks, formato):  # printare i mazzi in base al formato
     my_list = []
     for deck in decks:
         if deck["formato"] == formato:
@@ -153,7 +153,7 @@ def choose_format_deck(decks, formato):
     return my_list
 
 
-def searched_word(decks, choose):
+def searched_word(decks, choose):  # printare i mazzi n base alla parola scelta
     my_list = []
     for deck in decks:
         if deck["nome"] == choose:
@@ -165,7 +165,7 @@ def searched_word(decks, choose):
     return my_list
 
 
-def choose_1_deck(decks, number):
+def choose_1_deck(decks, number):  # printare 1 mazzi in base all'indice
     my_list = []
     for index, deck in enumerate(decks, 1):
         if index == number:
@@ -173,18 +173,18 @@ def choose_1_deck(decks, number):
     return my_list
 
 
-def modify_name():
+def modify_name():  # modificare il nome del file, nome del mazzo, formato o il prezzo
     while True:
         print("\nLista dei file disponibili")
         exit_mode()
         basepath = Path("Decks\\")
 
-        for index, deck_file in enumerate(basepath.iterdir(), 1):
+        for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare i nomi dei file per indice
             if deck_file.is_file():
                 print(str(index) + ")", deck_file.name)
 
         number_file = int(input("Inserire il numero del file da modificare: "))
-        for index, deck_file in enumerate(basepath.iterdir(), 1):
+        for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare le varie info scelte e le opzioni
             if deck_file.is_file():
                 if 0 == number_file:
                     return
@@ -201,13 +201,13 @@ def modify_name():
                           )
                     question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
                     question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi con i numeri
-                    if question == 1:
+                    if question == 1:  # cambiare nome al file
                         if index == number_file:
                             new_name = Path("Decks\\" + question2)
                             deck_file.rename(new_name)
                             break
 
-                    elif question == 2:
+                    elif question == 2:  # cambiare nome del mazzo
                         with deck_file.open() as file:
                             data = file.readlines()
                             data[0] = question2 + "\n"
@@ -215,7 +215,7 @@ def modify_name():
                             file1.writelines(data)
                             break
 
-                    elif question == 3:
+                    elif question == 3:  # cambiare formato del mazzo
                         with deck_file.open() as file:
                             data = file.readlines()
                             data[1] = question2 + "\n"
@@ -223,7 +223,7 @@ def modify_name():
                             file1.writelines(data)
                             break
 
-                    elif question == 4:
+                    elif question == 4:  # cambiare prezzo del mazzo
                         with deck_file.open() as file:
                             data = file.readlines()
                             data[2] = question2 + "\n"
@@ -236,7 +236,7 @@ def modify_name():
             return
 
 
-def looking_for_a_word():
+def looking_for_a_word():  # cercare una parola specifica in ogni file e printare le varie info
     while True:
         word = input("Digitare cosa cercare: ").title()
         basepath = Path("Decks\\")
