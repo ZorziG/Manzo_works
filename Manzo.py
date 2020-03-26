@@ -31,12 +31,6 @@ def show_menu1():
         choose = scelta_utente()
         if choose == 0:
             break
-        # elif choose == 1:
-        #     with open("Decks\\jund.txt") as file:
-        #         print(file.read())
-        # elif choose == 2:
-        #     with open("Decks\\Izzet.txt") as file:
-        #         print(file.read())
         elif choose > 0:
             print("mazzo non ancora disponibile")
 
@@ -139,25 +133,6 @@ def remove_deck():
             full_file_path = Path('Decks\\' + deck_to_be_deleted['nome'])
             full_file_path.unlink()
 
-    # while True:
-    #     print("\nLista dei mazzi disponibili")
-    #     exit_mode()
-    #     decks = read_decks_from_disk()
-    #     print_deck_index(decks)
-    #     #           REMOVE BY NAME
-    #     deck_folder = Path("Decks\\")
-    #     delete_deck = input("\nInserisci il numero per togliere il mazzo: ")
-    #     delete_deck = delete_deck.title()
-    #     for deck in deck_folder.iterdir():
-    #         if deck.is_file():
-    #             if deck.name == delete_deck:
-    #                 deck.unlink()
-    #                 break
-    #             elif "0" == delete_deck:
-    #                 return
-    #     else:
-    #         print("Mazzo non disponibile")
-
     #       REMOVE BY INDEX
     # for index, filename in enumerate(deck_folder.iterdir(), 1):
     #     if filename.is_file():
@@ -187,67 +162,66 @@ def choose_1_deck(decks, number):
 
 
 def modify_name():
-    print("\nLista dei file disponibili")
-    exit_mode()
-    basepath = Path("Decks\\")
+    while True:
+        print("\nLista dei file disponibili")
+        exit_mode()
+        basepath = Path("Decks\\")
 
-    for index, deck_file in enumerate(basepath.iterdir(), 1):
-        if deck_file.is_file():
-            print(str(index) + ")", deck_file.name)
+        for index, deck_file in enumerate(basepath.iterdir(), 1):
+            if deck_file.is_file():
+                print(str(index) + ")", deck_file.name)
 
-    number_file = int(input("Inserire il numero del file da modificare: "))
-    for index, deck_file in enumerate(basepath.iterdir(), 1):
-        if deck_file.is_file():
-            if 0 == number_file:
-                return
-            elif index == number_file:
-                print(f"Nome del file: {deck_file.name} ")
-                print("Info deck:")
-                decks = read_decks_from_disk()
-                deck_data = choose_1_deck(decks, index)
-                print_deck_no_index(deck_data)
-                print("""1) Nome File
+        number_file = int(input("Inserire il numero del file da modificare: "))
+        for index, deck_file in enumerate(basepath.iterdir(), 1):
+            if deck_file.is_file():
+                if 0 == number_file:
+                    return
+                elif index == number_file:
+                    print(f"Nome del file: {deck_file.name} ")
+                    print("Info deck:")
+                    decks = read_decks_from_disk()
+                    deck_data = choose_1_deck(decks, index)
+                    print_deck_no_index(deck_data)
+                    print("""1) Nome File
 2) Nome Mazzo
 3) Formato
 4) Prezzo"""
-                      )
-                question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
-                question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi con i numeri
-                if question == 1:
-                    if index == number_file:
-                        with deck_file.open("w") as file:
-                            file.write(question2)
+                          )
+                    question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
+                    question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi con i numeri
+                    if question == 1:
+                        if index == number_file:
+                            new_name = Path("Decks\\" + question2)
+                            deck_file.rename(new_name)
                             break
 
-                            # da sistemare
-                    # se si vuole modificare il nnome del file
-                elif question == 2:
-                    with deck_file.open() as file:
-                        data = file.readlines()
-                        data[0] = question2 + "\n"
-                    with deck_file.open("w") as file1:
-                        file1.writelines(data)
-                        break
+                    elif question == 2:
+                        with deck_file.open() as file:
+                            data = file.readlines()
+                            data[0] = question2 + "\n"
+                        with deck_file.open("w") as file1:
+                            file1.writelines(data)
+                            break
 
-                elif question == 3:
-                    with deck_file.open() as file:
-                        data = file.readlines()
-                        data[1] = question2 + "\n"
-                    with deck_file.open("w") as file1:
-                        file1.writelines(data)
-                        break
+                    elif question == 3:
+                        with deck_file.open() as file:
+                            data = file.readlines()
+                            data[1] = question2 + "\n"
+                        with deck_file.open("w") as file1:
+                            file1.writelines(data)
+                            break
 
-                elif question == 4:
-                    with deck_file.open() as file:
-                        data = file.readlines()
-                        data[2] = question2 + "\n"
-                    with deck_file.open("w") as file1:
-                        file1.writelines(data)
-                        break
+                    elif question == 4:
+                        with deck_file.open() as file:
+                            data = file.readlines()
+                            data[2] = question2 + "\n"
+                        with deck_file.open("w") as file1:
+                            file1.writelines(data)
+                            break
 
-    else:
-        print("file non disponibile")
-        return
+        else:
+            print("file non disponibile")
+            return
 
 
 def elabora_scelta_utente(choose):
