@@ -153,6 +153,18 @@ def choose_format_deck(decks, formato):
     return my_list
 
 
+def searched_word(decks, choose):
+    my_list = []
+    for deck in decks:
+        if deck["nome"] == choose:
+            my_list.append(deck)
+        elif deck["formato"] == choose:
+            my_list.append(deck)
+        elif deck["prezzo"] == choose:
+            my_list.append(deck)
+    return my_list
+
+
 def choose_1_deck(decks, number):
     my_list = []
     for index, deck in enumerate(decks, 1):
@@ -224,6 +236,26 @@ def modify_name():
             return
 
 
+def looking_for_a_word():
+    while True:
+        word = input("Digitare cosa cercare: ").title()
+        basepath = Path("Decks\\")
+        for file in basepath.iterdir():
+            if file.is_file():
+                with file.open() as deck:
+                    for line in deck:
+                        for w in line.split():
+                            if word == "Exit":
+                                return
+                            elif w == word:
+                                choose_deck = read_decks_from_disk()
+                                show = searched_word(choose_deck, word)
+                                return print_deck_index(show)
+
+        else:
+            print("nessuna riscontro trovato")
+
+
 def elabora_scelta_utente(choose):
     if choose == 1:
         show_menu1()
@@ -244,7 +276,7 @@ def elabora_scelta_utente(choose):
     elif choose == 7:
         modify_name()
     elif choose == 8:
-        pass
+        looking_for_a_word()
 
 
 while True:
