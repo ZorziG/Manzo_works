@@ -146,7 +146,7 @@ def remove_deck():
     #     print_deck_index(decks)
     #     #           REMOVE BY NAME
     #     deck_folder = Path("Decks\\")
-    #     delete_deck = input("\nInserisci il numero per togliere il mazzo: ")  # aggiungere int se lo rimetto come prima
+    #     delete_deck = input("\nInserisci il numero per togliere il mazzo: ")
     #     delete_deck = delete_deck.title()
     #     for deck in deck_folder.iterdir():
     #         if deck.is_file():
@@ -211,31 +211,43 @@ def modify_name():
 3) Formato
 4) Prezzo"""
                       )
-                question = int(input("Inserire numero per modifica: "))   # problemi con le lettere
+                question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
                 question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi con i numeri
                 if question == 1:
                     if index == number_file:
-                        # a = Path("Decks\\" + deck_file.name)  # da sistemare
-                        # print(a.cwd())
-                        # a.replace(question2)
+                        with deck_file.open("w") as file:
+                            file.write(question2)
+                            break
+
+                            # da sistemare
+                    # se si vuole modificare il nnome del file
+                elif question == 2:
+                    with deck_file.open() as file:
+                        data = file.readlines()
+                        data[0] = question2 + "\n"
+                    with deck_file.open("w") as file1:
+                        file1.writelines(data)
                         break
-                    # se il file è = al numero selezionato
-                    # file.name.replace(question2)
-            #             # se si vuole modificare il nnome del file
-            #         elif question == 2:
-            #             # se si vuole modificare il nome deck
-            #             pass
-            #         elif question == 3:
-            #             # se si vuole modificare il formato
-            #             pass
-            #         elif question == 4:
-            #             # se si vule modificare il prezzo
-            #             pass
+
+                elif question == 3:
+                    with deck_file.open() as file:
+                        data = file.readlines()
+                        data[1] = question2 + "\n"
+                    with deck_file.open("w") as file1:
+                        file1.writelines(data)
+                        break
+
+                elif question == 4:
+                    with deck_file.open() as file:
+                        data = file.readlines()
+                        data[2] = question2 + "\n"
+                    with deck_file.open("w") as file1:
+                        file1.writelines(data)
+                        break
 
     else:
         print("file non disponibile")
         return
-
 
 
 def elabora_scelta_utente(choose):
