@@ -87,7 +87,7 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
             continue
 
         basepath = decks_path()
-        with open(basepath.joinpath(my_deck["nome"]),  "w") as file:
+        with open(basepath.joinpath(my_deck["nome"]), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
@@ -183,65 +183,125 @@ def choose_1_deck(decks, number):  # printare 1 mazzi in base all'indice
 
 def modify_name():  # modificare il nome del file, nome del mazzo, formato o il prezzo
     while True:
-        print("\nLista dei file disponibili")
+        print("\nLista dei mazzi disponibili")
         exit_mode()
         basepath = decks_path()
-
-        for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare i nomi dei file per indice
-            if deck_file.is_file():
-                print(str(index) + ")", deck_file.name)
-
+        decks = read_decks_from_disk()
+        print_deck_index(decks)
         number_file = int(input("Inserire il numero del file da modificare: "))
         for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare le varie info scelte e le opzioni
             if deck_file.is_file():
                 if 0 == number_file:
                     return
                 elif index == number_file:
-                    print(f"Nome del file: {deck_file.name} ")
                     print("Info deck:")
                     decks = read_decks_from_disk()
                     deck_data = choose_1_deck(decks, index)
                     print_deck_no_index(deck_data)
-                    print("""1) Nome File
-2) Nome Mazzo
-3) Formato
-4) Prezzo"""
+                    print("""1)Nome Mazzo
+2) Formato
+3) Prezzo"""
                           )
                     question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
-                    question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi con i numeri
-                    if question == 1:  # cambiare nome al file
-                        if index == number_file:
-                            new_name = basepath.joinpath(question2)
-                            deck_file.rename(new_name)
-                            break
+                    question2 = input("modifica da fare: ").title()
 
-                    elif question == 2:  # cambiare nome del mazzo
+                    if question == 1:  # cambiare nome al file
                         with deck_file.open() as file:
                             data = file.readlines()
                             data[0] = question2 + "\n"
                         with deck_file.open("w") as file1:
                             file1.writelines(data)
-                            break
+                        new_name = basepath.joinpath(question2)
+                        deck_file.rename(new_name)
+                        break
 
-                    elif question == 3:  # cambiare formato del mazzo
+                    elif question == 2:  # cambiare nome del mazzo
+                        with deck_file.open() as file:
+                            data = file.readlines()
+                            data[0] = question2 + "\n"
+                            with deck_file.open("w") as file1:
+                                file1.writelines(data)
+                                break
+
+                    elif question == 2:  # cambiare formato del mazzo
                         with deck_file.open() as file:
                             data = file.readlines()
                             data[1] = question2 + "\n"
-                        with deck_file.open("w") as file1:
-                            file1.writelines(data)
-                            break
+                            with deck_file.open("w") as file1:
+                                file1.writelines(data)
+                                break
 
-                    elif question == 4:  # cambiare prezzo del mazzo
+                    elif question == 3:  # cambiare prezzo del mazzo
                         with deck_file.open() as file:
                             data = file.readlines()
                             data[2] = question2 + "\n"
-                        with deck_file.open("w") as file1:
-                            file1.writelines(data)
-                            break
-
+                            with deck_file.open("w") as file1:
+                                file1.writelines(data)
+                                break
         else:
-            print("file non disponibile")
+            print("mazzo non disponibile")
             return
+
+#     while True:
+#         print("\nLista dei file disponibili")
+#         exit_mode()
+#         basepath = decks_path()
+#
+#         for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare i nomi dei file per indice
+#             if deck_file.is_file():
+#                 print(str(index) + ")", deck_file.name)
+#
+#         number_file = int(input("Inserire il numero del file da modificare: "))
+#         for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare le varie info scelte e le opzioni
+#             if deck_file.is_file():
+#                 if 0 == number_file:
+#                     return
+#                 elif index == number_file:
+#                     print(f"Nome del file: {deck_file.name} ")
+#                     print("Info deck:")
+#                     decks = read_decks_from_disk()
+#                     deck_data = choose_1_deck(decks, index)
+#                     print_deck_no_index(deck_data)
+#                     print("""1) Nome File
+# 2) Nome Mazzo
+# 3) Formato
+# 4) Prezzo"""
+#                           )
+#                     question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
+#                     question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi i numeri
+#                     if question == 1:  # cambiare nome al file
+#                         if index == number_file:
+#                             new_name = basepath.joinpath(question2)
+#                             deck_file.rename(new_name)
+#                             break
+#
+#                     elif question == 2:  # cambiare nome del mazzo
+#                         with deck_file.open() as file:
+#                             data = file.readlines()
+#                             data[0] = question2 + "\n"
+#                         with deck_file.open("w") as file1:
+#                             file1.writelines(data)
+#                             break
+#
+#                     elif question == 3:  # cambiare formato del mazzo
+#                         with deck_file.open() as file:
+#                             data = file.readlines()
+#                             data[1] = question2 + "\n"
+#                         with deck_file.open("w") as file1:
+#                             file1.writelines(data)
+#                             break
+#
+#                     elif question == 4:  # cambiare prezzo del mazzo
+#                         with deck_file.open() as file:
+#                             data = file.readlines()
+#                             data[2] = question2 + "\n"
+#                         with deck_file.open("w") as file1:
+#                             file1.writelines(data)
+#                             break
+#
+#         else:
+#             print("file non disponibile")
+#             return
 
 
 def looking_for_a_word():  # cercare una parola specifica in ogni file e printare le varie info
