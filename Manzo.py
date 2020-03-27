@@ -2,11 +2,11 @@ from pathlib import Path
 
 
 def create_directory():  # creare una cartella
-    Path(".\\Decks\\").mkdir(parents=True, exist_ok=True)
+    Path("Decks").mkdir(parents=True, exist_ok=True)
 
 
 def decks_path():
-    basepath = Path("Decks\\")
+    basepath = Path("Decks")
     return basepath
 
 
@@ -50,6 +50,7 @@ def scelta_utente():
 
 def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per linea
     my_deck = {}
+
     while True:
         insert_deck = input("Inserisci il nome del mazzo: ").title()
         my_deck["nome"] = insert_deck
@@ -85,7 +86,8 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
             print("Prezzo non Valido")
             continue
 
-        with open("Decks\\" + my_deck["nome"], "w") as file:
+        basepath = decks_path()
+        with open(basepath.joinpath(my_deck["nome"]),  "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
@@ -127,7 +129,7 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
         exit_mode()
         decks = read_decks_from_disk()
         print_deck_index(decks)
-        index = int(input('scegli il mazzo il mazzo: '))
+        index = int(input('scegli il mazzo il mazzo da cancellare: '))
         if index == 0:
             return
         try:
@@ -135,7 +137,8 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
         except IndexError as e:
             print('il mazzo non esiste!', e)
         else:
-            full_file_path = Path('Decks\\' + deck_to_be_deleted['nome'])  # sistemare con il join
+            basepath = decks_path()
+            full_file_path = basepath.joinpath(deck_to_be_deleted['nome'])
             full_file_path.unlink()
 
     #       REMOVE BY INDEX
@@ -208,7 +211,7 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
                     question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi con i numeri
                     if question == 1:  # cambiare nome al file
                         if index == number_file:
-                            new_name = Path("Decks\\" + question2)
+                            new_name = basepath.joinpath(question2)
                             deck_file.rename(new_name)
                             break
 
