@@ -5,6 +5,11 @@ def create_directory():  # creare una cartella
     Path(".\\Decks\\").mkdir(parents=True, exist_ok=True)
 
 
+def decks_path():
+    basepath = Path("Decks\\")
+    return basepath
+
+
 def show_main_menu():
     menu = """   ---
 0) Exit
@@ -88,7 +93,7 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
 
 def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3 linee
     deck_list = []
-    basepath = Path("Decks\\")
+    basepath = decks_path()
 
     for filename in basepath.iterdir():
         if filename.is_file():
@@ -130,7 +135,7 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
         except IndexError as e:
             print('il mazzo non esiste!', e)
         else:
-            full_file_path = Path('Decks\\' + deck_to_be_deleted['nome'])
+            full_file_path = Path('Decks\\' + deck_to_be_deleted['nome'])  # sistemare con il join
             full_file_path.unlink()
 
     #       REMOVE BY INDEX
@@ -177,7 +182,7 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
     while True:
         print("\nLista dei file disponibili")
         exit_mode()
-        basepath = Path("Decks\\")
+        basepath = decks_path()
 
         for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare i nomi dei file per indice
             if deck_file.is_file():
@@ -239,7 +244,7 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
 def looking_for_a_word():  # cercare una parola specifica in ogni file e printare le varie info
     while True:
         word = input("Digitare cosa cercare: ").title()
-        basepath = Path("Decks\\")
+        basepath = decks_path()
         for file in basepath.iterdir():
             if file.is_file():
                 with file.open() as deck:
