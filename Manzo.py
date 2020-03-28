@@ -141,17 +141,6 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
             full_file_path = basepath.joinpath(deck_to_be_deleted['nome'])
             full_file_path.unlink()
 
-    #       REMOVE BY INDEX
-    # for index, filename in enumerate(deck_folder.iterdir(), 1):
-    #     if filename.is_file():
-    #         if index == delete_deck:
-    #             filename.unlink()
-    #             break
-    #         elif 0 == delete_deck:
-    #             break
-    # else:
-    #     print("mazzo non disponibile")
-
 
 def choose_format_deck(decks, formato):  # printare i mazzi in base al formato
     my_list = []
@@ -198,110 +187,48 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
                     decks = read_decks_from_disk()
                     deck_data = choose_1_deck(decks, index)
                     print_deck_no_index(deck_data)
-                    print("""1)Nome Mazzo
+                    print("""1) Nome Mazzo
 2) Formato
 3) Prezzo"""
                           )
                     question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
-                    question2 = input("modifica da fare: ").title()
 
                     if question == 1:  # cambiare nome al file
+                        question1 = input("Rinnominare il mazzo: ").title()
                         with deck_file.open() as file:
                             data = file.readlines()
-                            data[0] = question2 + "\n"
+                            data[0] = question1 + "\n"
                         with deck_file.open("w") as file1:
                             file1.writelines(data)
-                        new_name = basepath.joinpath(question2)
+                        new_name = basepath.joinpath(question1)
                         deck_file.rename(new_name)
                         break
 
-                    elif question == 2:  # cambiare nome del mazzo
-                        with deck_file.open() as file:
-                            data = file.readlines()
-                            data[0] = question2 + "\n"
-                            with deck_file.open("w") as file1:
-                                file1.writelines(data)
-                                break
-
-                    elif question == 2:  # cambiare formato del mazzo
-                        with deck_file.open() as file:
-                            data = file.readlines()
-                            data[1] = question2 + "\n"
-                            with deck_file.open("w") as file1:
-                                file1.writelines(data)
-                                break
+                    elif question == 2:  # sistemare che continua a uscire fuori scelta non valida dell'else
+                        legal_format = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
+                        print("\nI Formati disponibili sono:")
+                        for i, deck in enumerate(legal_format, 1):
+                            print(str(i) + ')', deck)
+                        question2 = int(input("Scegliere formato: "))
+                        for ind, deck in enumerate(legal_format, 1):
+                            if ind == question2:
+                                with deck_file.open() as file:
+                                    data = file.readlines()
+                                    data[1] = deck + "\n"
+                                with deck_file.open("w") as file1:
+                                    file1.writelines(data)
+                                    break
 
                     elif question == 3:  # cambiare prezzo del mazzo
+                        question3 = input("Modificare prezzo: ")
                         with deck_file.open() as file:
                             data = file.readlines()
-                            data[2] = question2 + "\n"
-                            with deck_file.open("w") as file1:
-                                file1.writelines(data)
-                                break
+                            data[2] = question3 + "\n"
+                        with deck_file.open("w") as file1:
+                            file1.writelines(data)
+                            break
         else:
-            print("mazzo non disponibile")
-            return
-
-#     while True:
-#         print("\nLista dei file disponibili")
-#         exit_mode()
-#         basepath = decks_path()
-#
-#         for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare i nomi dei file per indice
-#             if deck_file.is_file():
-#                 print(str(index) + ")", deck_file.name)
-#
-#         number_file = int(input("Inserire il numero del file da modificare: "))
-#         for index, deck_file in enumerate(basepath.iterdir(), 1):  # printare le varie info scelte e le opzioni
-#             if deck_file.is_file():
-#                 if 0 == number_file:
-#                     return
-#                 elif index == number_file:
-#                     print(f"Nome del file: {deck_file.name} ")
-#                     print("Info deck:")
-#                     decks = read_decks_from_disk()
-#                     deck_data = choose_1_deck(decks, index)
-#                     print_deck_no_index(deck_data)
-#                     print("""1) Nome File
-# 2) Nome Mazzo
-# 3) Formato
-# 4) Prezzo"""
-#                           )
-#                     question = int(input("Inserire numero per modifica: "))  # problemi con le lettere
-#                     question2 = input("modifica da fare: ").title()  # .title() da sistemare se da problemi i numeri
-#                     if question == 1:  # cambiare nome al file
-#                         if index == number_file:
-#                             new_name = basepath.joinpath(question2)
-#                             deck_file.rename(new_name)
-#                             break
-#
-#                     elif question == 2:  # cambiare nome del mazzo
-#                         with deck_file.open() as file:
-#                             data = file.readlines()
-#                             data[0] = question2 + "\n"
-#                         with deck_file.open("w") as file1:
-#                             file1.writelines(data)
-#                             break
-#
-#                     elif question == 3:  # cambiare formato del mazzo
-#                         with deck_file.open() as file:
-#                             data = file.readlines()
-#                             data[1] = question2 + "\n"
-#                         with deck_file.open("w") as file1:
-#                             file1.writelines(data)
-#                             break
-#
-#                     elif question == 4:  # cambiare prezzo del mazzo
-#                         with deck_file.open() as file:
-#                             data = file.readlines()
-#                             data[2] = question2 + "\n"
-#                         with deck_file.open("w") as file1:
-#                             file1.writelines(data)
-#                             break
-#
-#         else:
-#             print("file non disponibile")
-#             return
+            print("scelta non valida")
 
 
 def looking_for_a_word():  # cercare una parola specifica in ogni file e printare le varie info
@@ -317,15 +244,6 @@ def looking_for_a_word():  # cercare una parola specifica in ogni file e printar
                         choose_deck = read_decks_from_disk()
                         show = searched_word(choose_deck, word)
                         return print_deck_index(show)
-                    # for line in deck:
-                    #     for w in line.split():
-                    #         if word == "Exit":
-                    #             return
-                    #         elif w == word:
-                    #             choose_deck = read_decks_from_disk()
-                    #             show = searched_word(choose_deck, word)
-                    #             return print_deck_index(show)
-
         else:
             print("nessuna riscontro trovato")
 
