@@ -153,11 +153,11 @@ def choose_format_deck(decks, formato):  # printare i mazzi in base al formato
 def searched_word(decks, choose):  # printare i mazzi n base alla parola scelta
     my_list = []
     for deck in decks:
-        if deck["nome"] == choose:
+        if choose in deck["nome"]:
             my_list.append(deck)
-        elif deck["formato"] == choose:
+        elif choose in deck["formato"]:
             my_list.append(deck)
-        elif deck["prezzo"] == choose:
+        elif choose in deck["prezzo"]:
             my_list.append(deck)
     return my_list
 
@@ -233,7 +233,7 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
 
 def looking_for_a_word():  # cercare una parola specifica in ogni file e printare le varie info
     while True:
-        word = input("Digitare cosa cercare: ").title()
+        word = input("Digitare cosa cercare: ").lower()
         basepath = decks_path()
         for file in basepath.iterdir():
             if file.is_file():
