@@ -87,7 +87,11 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
             continue
 
         basepath = decks_path()
-        with open(basepath.joinpath(my_deck["nome"]), "w") as file:
+
+        i = 0
+        while basepath.joinpath(my_deck['nome'] + str(i)).exists():
+            i += 1
+        with open(basepath.joinpath(my_deck["nome"] + str(i)), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
