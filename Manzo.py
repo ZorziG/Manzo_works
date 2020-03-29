@@ -86,15 +86,26 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
             print("Prezzo non Valido")
             continue
 
-        basepath = decks_path()
+        # basepath = decks_path()
+        #
+        # i = 0
+        # while basepath.joinpath(my_deck['nome'] + str(i)).exists():
+        #     i += 1
 
-        i = 0
-        while basepath.joinpath(my_deck['nome'] + str(i)).exists():
-            i += 1
-        with open(basepath.joinpath(my_deck["nome"] + str(i)), "w") as file:
+        with open(incrementing_filename(my_deck["nome"]), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
+        # with open(basepath.joinpath(my_deck["nome"] + str(i)), "w") as file:
+        #     file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
+
+
+def incrementing_filename(nome):
+    basepath = decks_path()
+    i = 0
+    while basepath.joinpath(nome + str(i)).exists():
+        i += 1
+    return basepath.joinpath(nome + str(i))
 
 
 def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3 linee
@@ -204,8 +215,11 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
                             data[0] = question1 + "\n"
                         with deck_file.open("w") as file1:
                             file1.writelines(data)
-                        new_name = basepath.joinpath(question1)
+
+                        new_name = incrementing_filename(question1)  # rinnominare il nome del file
                         deck_file.rename(new_name)
+                        # new_name = basepath.joinpath(question1)           # rinnominare il nome del file
+                        # deck_file.rename(new_name)
                         break
 
                     elif question == 2:  # sistemare che continua a uscire fuori scelta non valida dell'else
