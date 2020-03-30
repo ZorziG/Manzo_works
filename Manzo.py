@@ -120,6 +120,7 @@ def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3
             with filename.open() as file:
                 deck_info = file.read().splitlines()
                 d = {
+                    "nome_file": filename.name,
                     "nome": deck_info[0],
                     "formato": deck_info[1],
                     "prezzo": deck_info[2]
@@ -155,14 +156,9 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
         except IndexError as e:
             print('il mazzo non esiste!', e)
         else:
-                    # SISTEMARE QUESTO CODICE
             basepath = decks_path()
-            for filename in basepath.iterdir():
-                if filename.is_file():
-                    if filename == deck_to_be_deleted:
-                        print("a")
-                    # full_file_path = basepath.joinpath(filename.name)
-                    # full_file_path.unlink()
+            full_file_path = basepath.joinpath(deck_to_be_deleted["nome_file"])
+            full_file_path.unlink()
 
 
 def choose_format_deck(decks, formato):  # printare i mazzi in base al formato
@@ -194,6 +190,19 @@ def choose_1_deck(decks, number):  # printare 1 mazzi in base all'indice
 
 
 def modify_name():  # modificare il nome del file, nome del mazzo, formato o il prezzo
+    # print("\nLista dei mazzi disponibili")
+    # exit_mode()
+    # decks = read_decks_from_disk()
+    # print_deck_index(decks)
+    # basepath = decks_path()
+    # index = int(input('scegli il mazzo il mazzo da modificare: '))
+    # deck_to_be_deleted = decks[index - 1]
+    # print(deck_to_be_deleted)
+    # if index == 0:
+    #     return
+    # elif index == deck_to_be_deleted:
+    #     print(deck_to_be_deleted)
+
     while True:
         print("\nLista dei mazzi disponibili")
         exit_mode()
