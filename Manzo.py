@@ -102,10 +102,13 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
 
 def incrementing_filename(nome):
     basepath = decks_path()
-    i = 0
-    while basepath.joinpath(nome + str(i)).exists():
-        i += 1
-    return basepath.joinpath(nome + str(i))
+    i = 1
+    if not basepath.joinpath(nome).exists():
+        return basepath.joinpath(nome)
+    else:
+        while basepath.joinpath(nome + str(i)).exists():
+            i += 1
+        return basepath.joinpath(nome + str(i))
 
 
 def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3 linee
@@ -152,9 +155,14 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
         except IndexError as e:
             print('il mazzo non esiste!', e)
         else:
+                    # SISTEMARE QUESTO CODICE
             basepath = decks_path()
-            full_file_path = basepath.joinpath(deck_to_be_deleted['nome'])
-            full_file_path.unlink()
+            for filename in basepath.iterdir():
+                if filename.is_file():
+                    if filename == deck_to_be_deleted:
+                        print("a")
+                    # full_file_path = basepath.joinpath(filename.name)
+                    # full_file_path.unlink()
 
 
 def choose_format_deck(decks, formato):  # printare i mazzi in base al formato
@@ -218,24 +226,22 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
 
                         new_name = incrementing_filename(question1)  # rinnominare il nome del file
                         deck_file.rename(new_name)
-                        # new_name = basepath.joinpath(question1)           # rinnominare il nome del file
-                        # deck_file.rename(new_name)
                         break
 
                     elif question == 2:  # sistemare che continua a uscire fuori scelta non valida dell'else
                         legal_format = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
                         print("\nI Formati disponibili sono:")
-                        for i, deck in enumerate(legal_format, 1):
-                            print(str(i) + ')', deck)
-                        question2 = int(input("Scegliere formato: "))
-                        for ind, deck in enumerate(legal_format, 1):
+                        for i, deck in enumerate(legal_format, 1):  # itera tutti i formati di sponibli
+                            print(str(i) + ')', deck)  # me li stampa
+                        question2 = int(input("Scegliere formato: "))  # quale formato devo sceglire
+                        for ind, deck in enumerate(legal_format, 1):  # itera i formati disponibili
                             if ind == question2:
-                                with deck_file.open() as file:
-                                    data = file.readlines()
+                                with deck_file.open() as file:  # apre il file
+                                    data = file.readlines()  # leegge le righe
                                     data[1] = deck + "\n"
-                                with deck_file.open("w") as file1:
-                                    file1.writelines(data)
-                                    break
+                                with deck_file.open("w") as file1:  # apre il formato
+                                    file1.writelines(data)  # riscrive la riga
+                                break
 
                     elif question == 3:  # cambiare prezzo del mazzo
                         question3 = input("Modificare prezzo: ")
@@ -244,7 +250,7 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
                             data[2] = question3 + "\n"
                         with deck_file.open("w") as file1:
                             file1.writelines(data)
-                            break
+                        break
         else:
             print("scelta non valida")
 
