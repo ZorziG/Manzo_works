@@ -39,16 +39,16 @@ def show_menu1():
         exit_mode()
         decks = read_decks_from_disk()
         print_deck_index(decks)
-        deckpath = decks_path()
-        tournamentpath = tournaments_path()
+        deck_path = decks_path()
+        tournament_path = tournaments_path()
         deck = choose_deck(decks)
         if deck == 0:
             return
         elif deck:
-            with deckpath.joinpath(deck["nome_file"]).open() as deck_file:
+            with deck_path.joinpath(deck["nome_file"]).open() as deck_file:
                 print(deck_file.readlines())
-            if tournamentpath.joinpath(deck["nome_file"] + "_tournament").exists():
-                with tournamentpath.joinpath(deck["nome_file"] + "_tournament").open() as tournament_file:
+            if tournament_path.joinpath(deck["nome_file"]).exists():
+                with tournament_path.joinpath(deck["nome_file"]).open() as tournament_file:
                     print(tournament_file.readlines())
 
 
@@ -105,21 +105,21 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
 
 
 def incrementing_filename(nome):
-    basepath = decks_path()
+    deck_path = decks_path()
     i = 1
-    if not basepath.joinpath(nome).exists():
-        return basepath.joinpath(nome)
+    if not deck_path.joinpath(nome).exists():
+        return deck_path.joinpath(nome)
     else:
-        while basepath.joinpath(nome + str(i)).exists():
+        while deck_path.joinpath(nome + str(i)).exists():
             i += 1
-        return basepath.joinpath(nome + str(i))
+        return deck_path.joinpath(nome + str(i))
 
 
 def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3 linee
     deck_list = []
-    basepath = decks_path()
+    deck_path = decks_path()
 
-    for filename in basepath.iterdir():
+    for filename in deck_path.iterdir():
         if filename.is_file():
             with filename.open() as file:
                 deck_info = file.read().splitlines()
@@ -160,8 +160,8 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
         except IndexError as e:
             print('il mazzo non esiste!', e)
         else:
-            basepath = decks_path()
-            full_file_path = basepath.joinpath(deck_to_be_deleted["nome_file"])
+            deck_path = decks_path()
+            full_file_path = deck_path.joinpath(deck_to_be_deleted["nome_file"])
             full_file_path.unlink()
 
 
@@ -203,20 +203,20 @@ def choose_field_to_edit():
 
 
 def edit_name(deck):
-    basepath = decks_path()
+    deck_path = decks_path()
     question1 = input("Rinnominare il mazzo: ").title()
-    with basepath.joinpath(deck["nome_file"]).open() as file:
+    with deck_path.joinpath(deck["nome_file"]).open() as file:
         data = file.readlines()
         data[0] = question1 + "\n"
-    with basepath.joinpath(deck["nome_file"]).open("w") as file1:
+    with deck_path.joinpath(deck["nome_file"]).open("w") as file1:
         file1.writelines(data)
 
     new_name = incrementing_filename(question1)  # rinnominare il nome del file
-    basepath.joinpath(deck["nome_file"]).rename(new_name)
+    deck_path.joinpath(deck["nome_file"]).rename(new_name)
 
 
 def edit_format(deck):
-    basepath = decks_path()
+    deck_path = decks_path()
     legal_formats = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
     print("\nI Formati disponibili sono:")
     for i, legal_format in enumerate(legal_formats, 1):  # itera tutti i formati di sponibli
@@ -225,22 +225,22 @@ def edit_format(deck):
 
     try:
         if legal_formats[question2 - 1]:
-            with basepath.joinpath(deck["nome_file"]).open() as file:
+            with deck_path.joinpath(deck["nome_file"]).open() as file:
                 data = file.readlines()
                 data[1] = legal_formats[question2 - 1] + "\n"
-            with basepath.joinpath(deck["nome_file"]).open("w") as file1:
+            with deck_path.joinpath(deck["nome_file"]).open("w") as file1:
                 file1.writelines(data)
     except IndexError as err:
         print("formato non disponibile", err)
 
 
 def edit_price(deck):
-    basepath = decks_path()
+    deck_path = decks_path()
     question3 = input("Modificare prezzo: ")
-    with basepath.joinpath(deck["nome_file"]).open() as file:
+    with deck_path.joinpath(deck["nome_file"]).open() as file:
         data = file.readlines()
         data[2] = question3 + "\n"
-    with basepath.joinpath(deck["nome_file"]).open("w") as file1:
+    with deck_path.joinpath(deck["nome_file"]).open("w") as file1:
         file1.writelines(data)
 
 
@@ -281,8 +281,8 @@ def searched_word(decks, choose):
 def looking_for_a_word():  # cercare una parola specifica in ogni file e printare le varie info
     while True:
         word = input("Digitare cosa cercare: ")
-        basepath = decks_path()
-        for file in basepath.iterdir():
+        deck_path = decks_path()
+        for file in deck_path.iterdir():
             if file.is_file():
                 with file.open() as deck:
                     if word == "Exit" or word == "exit" or word == "EXIT":
@@ -307,8 +307,8 @@ def tournament_result(deck):
         position = input("Posizione finale del torneo: ")
         tournament["position"] = position
 
-        basepath = tournaments_path()
-        with basepath.joinpath(deck["nome_file"] + "_tournament").open("a") as file:
+        tournament_path = tournaments_path()
+        with tournament_path.joinpath(deck["nome_file"]).open("a") as file:
             file.write(f"Nome torneo: {tournament['tournament_name']}"
                        f"\nWin-Lose-tie: {tournament['result']}"
                        f"\nPosizione: {tournament['position']}\n")
