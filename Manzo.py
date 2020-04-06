@@ -3,11 +3,15 @@ from pathlib import Path
 
 def create_directory():  # creare una cartella
     Path("Decks").mkdir(parents=True, exist_ok=True)
+    Path("Tournaments").mkdir(parents=True, exist_ok=True)
+
+
+def tournaments_path():
+    return Path("Tournaments")
 
 
 def decks_path():
-    basepath = Path("Decks")
-    return basepath
+    return Path("Decks")
 
 
 def show_main_menu():
@@ -21,6 +25,7 @@ def show_main_menu():
 6) Pionner Decks
 7) Modify
 8) Search
+9) Enter deck result
    ---"""
     print(menu)
 
@@ -32,12 +37,19 @@ def exit_mode():
 def show_menu1():
     while True:
         exit_mode()
-        print_deck_index(read_decks_from_disk())
-        choose = scelta_utente()
-        if choose == 0:
-            break
-        elif choose > 0:
-            print("mazzo non ancora disponibile")
+        decks = read_decks_from_disk()
+        print_deck_index(decks)
+        deckpath = decks_path()
+        tournamentpath = tournaments_path()
+        deck = choose_deck(decks)
+        if deck == 0:
+            return
+        elif deck:
+            with deckpath.joinpath(deck["nome_file"]).open() as deck_file:
+                print(deck_file.readlines())
+            if tournamentpath.joinpath(deck["nome_file"] + "_tournament").exists():
+                with tournamentpath.joinpath(deck["nome_file"] + "_tournament").open() as tournament_file:
+                    print(tournament_file.readlines())
 
 
 def scelta_utente():
@@ -86,16 +98,8 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
             print("Prezzo non Valido")
             continue
 
-        # basepath = decks_path()
-        #
-        # i = 0
-        # while basepath.joinpath(my_deck['nome'] + str(i)).exists():
-        #     i += 1
-
         with open(incrementing_filename(my_deck["nome"]), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
-        # with open(basepath.joinpath(my_deck["nome"] + str(i)), "w") as file:
-        #     file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
 
@@ -123,7 +127,7 @@ def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3
                     "nome_file": filename.name,
                     "nome": deck_info[0],
                     "formato": deck_info[1],
-                    "prezzo": deck_info[2]
+                    "prezzo": deck_info[2],
                 }
             deck_list.append(d)
 
@@ -169,23 +173,20 @@ def choose_format_deck(decks, formato):  # printare i mazzi in base al formato
     return my_list
 
 
-def searched_word(decks, choose):  # printare i mazzi n base alla parola scelta
-    my_list = []
-    for deck in decks:
-        if choose in deck["nome"]:
-            my_list.append(deck)
-        elif choose in deck["formato"]:
-            my_list.append(deck)
-        elif choose in deck["prezzo"]:
-            my_list.append(deck)
-    return my_list
-
-
 def choose_deck(decks):
     index = int(input("mazzo da scegliere:"))
     if index == 0:
         return index
+    try:
+        return decks[index - 1]
+    except IndexError as err:
+        print("mazzo non disponibile", err)
 
+
+def choose_deck_with_print(decks):
+    index = int(input("mazzo da scegliere:"))
+    if index == 0:
+        return index
     try:
         print_deck_no_index([decks[index - 1]])
         return decks[index - 1]
@@ -214,7 +215,7 @@ def edit_name(deck):
     basepath.joinpath(deck["nome_file"]).rename(new_name)
 
 
-def modity_format(deck):
+def edit_format(deck):
     basepath = decks_path()
     legal_formats = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
     print("\nI Formati disponibili sono:")
@@ -249,28 +250,37 @@ def modify_name():  # modificare il nome del file, nome del mazzo, formato o il 
         exit_mode()
         decks = read_decks_from_disk()
         print_deck_index(decks)
-        deck = choose_deck(decks)
+        deck = choose_deck_with_print(decks)
         if deck == 0:
             return
         if deck:
             modify_choice = choose_field_to_edit()
-            # modifico parametro
             if modify_choice == 1:
-
                 edit_name(deck)
             elif modify_choice == 2:
-
-                modity_format(deck)
+                edit_format(deck)
             elif modify_choice == 3:
                 edit_price(deck)
-
             else:
                 print("campo non disponibile")
 
 
+def searched_word(decks, choose):
+    my_list = []
+    for deck in decks:
+        if choose in deck["nome"]:
+            my_list.append(deck)
+        elif choose in deck["formato"]:
+            my_list.append(deck)
+        elif choose in deck["prezzo"]:
+            my_list.append(deck)
+
+    return my_list
+
+
 def looking_for_a_word():  # cercare una parola specifica in ogni file e printare le varie info
     while True:
-        word = input("Digitare cosa cercare: ").lower()
+        word = input("Digitare cosa cercare: ")
         basepath = decks_path()
         for file in basepath.iterdir():
             if file.is_file():
@@ -285,10 +295,31 @@ def looking_for_a_word():  # cercare una parola specifica in ogni file e printar
             print("nessuna riscontro trovato")
 
 
+def tournament_result(deck):
+    tournament = {}
+    while True:
+        tournament_name = input("inserisci il nome del torneo: ").title()
+        tournament["tournament_name"] = tournament_name
+
+        result = input("Inserire win-lose-tie:")
+        tournament["result"] = result
+
+        position = input("Posizione finale del torneo: ")
+        tournament["position"] = position
+
+        basepath = tournaments_path()
+        with basepath.joinpath(deck["nome_file"] + "_tournament").open("a") as file:
+            file.write(f"Nome torneo: {tournament['tournament_name']}"
+                       f"\nWin-Lose-tie: {tournament['result']}"
+                       f"\nPosizione: {tournament['position']}\n")
+
+        break
+
+
 def elabora_scelta_utente(choose):
     if choose == 1:
         show_menu1()
-    elif choose == 2 or choose > 9:
+    elif choose == 2 or choose > 11:
         print("scelta al momento non disponibile")
     elif choose == 3:
         add_deck()
@@ -307,7 +338,10 @@ def elabora_scelta_utente(choose):
     elif choose == 8:
         looking_for_a_word()
     elif choose == 9:
-        print(read_decks_from_disk())
+        decks = read_decks_from_disk()
+        print_deck_index(decks)
+        deck = choose_deck_with_print(decks)
+        tournament_result(deck)
 
 
 while True:
