@@ -26,6 +26,7 @@ def show_main_menu():
 7) Modify
 8) Search
 9) Enter deck result
+10) View all tournament
    ---"""
     print(menu)
 
@@ -45,11 +46,13 @@ def show_menu1():
         if deck == 0:
             return
         elif deck:
-            with deck_path.joinpath(deck["nome_file"]).open() as deck_file:
-                print(deck_file.readlines())
+
             if tournament_path.joinpath(deck["nome_file"]).exists():
-                with tournament_path.joinpath(deck["nome_file"]).open() as tournament_file:
-                    print(tournament_file.readlines())
+                print(read_decks_from_disk())
+                print(read_tournament_from_disk())
+                x = read_tournament_from_disk()
+                print_tournament(x)
+
 
 
 def scelta_utente():
@@ -98,13 +101,13 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
             print("Prezzo non Valido")
             continue
 
-        with open(incrementing_filename(my_deck["nome"]), "w") as file:
+        with open(incrementing_deck_filename(my_deck["nome"]), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
 
 
-def incrementing_filename(nome):
+def incrementing_deck_filename(nome):
     deck_path = decks_path()
     i = 1
     if not deck_path.joinpath(nome).exists():
@@ -211,8 +214,9 @@ def edit_name(deck):
     with deck_path.joinpath(deck["nome_file"]).open("w") as file1:
         file1.writelines(data)
 
-    new_name = incrementing_filename(question1)  # rinnominare il nome del file
-    deck_path.joinpath(deck["nome_file"]).rename(new_name)
+        # rinnominare il nome file
+    # new_name = incrementing_deck_filename(question1)
+    # deck_path.joinpath(deck["nome_file"]).rename(new_name)
 
 
 def edit_format(deck):
@@ -309,11 +313,40 @@ def tournament_result(deck):
 
         tournament_path = tournaments_path()
         with tournament_path.joinpath(deck["nome_file"]).open("a") as file:
-            file.write(f"Nome torneo: {tournament['tournament_name']}"
-                       f"\nWin-Lose-tie: {tournament['result']}"
-                       f"\nPosizione: {tournament['position']}\n")
+            file.write(f"{tournament['tournament_name']}"
+                       f"\n{tournament['result'][0]}"
+                       f"\n{tournament['result'][2]}"
+                       f"\n{tournament['result'][4]}"
+                       f"\n{tournament['position']}\n")
 
         break
+
+
+def read_tournament_from_disk():
+    tournament_path = tournaments_path()
+    tournament_list = []
+    for filename in tournament_path.iterdir():
+        if filename.is_file():
+            with filename.open() as file:
+                tournament_info = file.read().splitlines()
+                d = {
+                    "nome_file": filename.name,
+                    "torneo": tournament_info[0::5],
+                    "win": tournament_info[1::5],
+                    "lose": tournament_info[2::5],
+                    "tie": tournament_info[3::5],
+                    "posizione": tournament_info[4::5]
+                    }
+                tournament_list.append(d)
+
+    return tournament_list
+              
+def print_tournament(tornei):
+    for t in tornei:
+        zipped = zip(t['torneo'], t['win'], t['lose'], t['tie'], t['posizione'])
+        for torneo, win, lose, tie, posizione in zipped:
+            print(f"torneo: {torneo}, win-lose-tie: {win}-{lose}-{tie}, posizione: {posizione}, mazzo:{t['nome_file']}")
+    print("---")
 
 
 def elabora_scelta_utente(choose):
@@ -342,7 +375,9 @@ def elabora_scelta_utente(choose):
         print_deck_index(decks)
         deck = choose_deck_with_print(decks)
         tournament_result(deck)
-
+    elif choose == 10:
+        tournament = read_tournament_from_disk()
+        print_tournament(tournament)
 
 while True:
     create_directory()
