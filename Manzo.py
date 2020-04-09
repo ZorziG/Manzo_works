@@ -40,19 +40,16 @@ def show_menu1():
         exit_mode()
         decks = read_decks_from_disk()
         print_deck_index(decks)
-        deck_path = decks_path()
         tournament_path = tournaments_path()
         deck = choose_deck(decks)
         if deck == 0:
             return
         elif deck:
-
             if tournament_path.joinpath(deck["nome_file"]).exists():
                 print(read_decks_from_disk())
                 print(read_tournament_from_disk())
                 x = read_tournament_from_disk()
                 print_tournament(x)
-
 
 
 def scelta_utente():
@@ -336,16 +333,19 @@ def read_tournament_from_disk():
                     "lose": tournament_info[2::5],
                     "tie": tournament_info[3::5],
                     "posizione": tournament_info[4::5]
-                    }
+                }
                 tournament_list.append(d)
 
     return tournament_list
-              
-def print_tournament(tornei):
+
+
+def print_tournament(tornei, decks):
     for t in tornei:
-        zipped = zip(t['torneo'], t['win'], t['lose'], t['tie'], t['posizione'])
-        for torneo, win, lose, tie, posizione in zipped:
-            print(f"torneo: {torneo}, win-lose-tie: {win}-{lose}-{tie}, posizione: {posizione}, mazzo:{t['nome_file']}")
+        for d in decks:
+            if t["nome_file"] == d["nome_file"]:
+                zipped = zip(t['torneo'], t['win'], t['lose'], t['tie'], t['posizione'])
+                for torneo, win, lose, tie, posizione in zipped:
+                    print(f"torneo: {torneo}, win-lose-tie: {win}-{lose}-{tie}, posizione: {posizione}, mazzo:{d['nome']}")
     print("---")
 
 
@@ -376,8 +376,10 @@ def elabora_scelta_utente(choose):
         deck = choose_deck_with_print(decks)
         tournament_result(deck)
     elif choose == 10:
+        decks = read_decks_from_disk()
         tournament = read_tournament_from_disk()
-        print_tournament(tournament)
+        print_tournament(tournament,decks)
+
 
 while True:
     create_directory()
