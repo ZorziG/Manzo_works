@@ -49,7 +49,7 @@ def show_menu1():
                 print(read_decks_from_disk())
                 print(read_tournament_from_disk())
                 x = read_tournament_from_disk()
-                print_tournament(x)
+                print_tournament(x, decks)
 
 
 def scelta_utente():
@@ -67,36 +67,40 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
         insert_deck = input("Inserisci il nome del mazzo: ").title()
         my_deck["nome"] = insert_deck
 
-        legal_format = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
-        print("\nI Formati disponibili sono:")
-        for index, deck in enumerate(legal_format, 1):
-            print(str(index) + ')', deck)
+        while True:
+            legal_format = ["Modern", "Standard", "Pioneer", "Legacy", "Vintage", "Commander", "Pauper"]
+            print("\nI Formati disponibili sono:")
+            for index, deck in enumerate(legal_format, 1):
+                print(str(index) + ')', deck)
 
-        try:
-            add_format = int(input("Inserisci il formato: "))
-        except ValueError:
-            print("Problema: inseriere solo numeri")
-            continue
+            try:
+                add_format = int(input("Inserisci il formato: "))
+            except ValueError:
+                print("Problema: inseriere solo numeri")
+                continue
 
-        for index, deck in enumerate(legal_format, 1):
-            if index == add_format:
-                my_deck["formato"] = deck
+            for index, deck in enumerate(legal_format, 1):
+                if index == add_format:
+                    my_deck["formato"] = deck
+                    break
+            else:
+                print("Formato non disponibile")
+                continue
+            break
+
+        while True:
+            print("Il valore del mazzo non può essere 0")
+            try:
+                add_price = int(input("Inserisci valore del mazzo: "))
+            except ValueError:
+                print("Problema: inseriere solo numeri")
+                continue
+            if add_price > 0:
+                my_deck["prezzo"] = add_price
                 break
-        else:
-            print("Formato non disponibile")
-            continue
-
-        print("Il valore del mazzo non può essere 0")
-        try:
-            add_price = int(input("Inserisci valore del mazzo: "))
-        except ValueError:
-            print("Problema: inseriere solo numeri")
-            continue
-        if add_price > 0:
-            my_deck["prezzo"] = add_price
-        else:
-            print("Prezzo non Valido")
-            continue
+            else:
+                print("Prezzo non Valido")
+                continue
 
         with open(incrementing_deck_filename(my_deck["nome"]), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
@@ -302,18 +306,33 @@ def tournament_result(deck):
         tournament_name = input("inserisci il nome del torneo: ").title()
         tournament["tournament_name"] = tournament_name
 
-        result = input("Inserire win-lose-tie:")
-        tournament["result"] = result
+        while True:
+            try:
+                win, lose, tie = input("Inserire win-lose-tie:").split("-")
+                win, lose, tie = int(win), int(lose), int(tie)
+            except ValueError as err:
+                print("formato disponibile è win-lose-tie: ", err)
+                continue
+            tournament["win"] = win
+            tournament["lose"] = lose
+            tournament["tie"] = tie
+            break
 
-        position = input("Posizione finale del torneo: ")
-        tournament["position"] = position
+        while True:
+            try:
+                position = int(input("Posizione finale del torneo: "))
+            except ValueError as err:
+                print("inserire solo numeri: ", err)
+                continue
+            tournament["position"] = position
+            break
 
         tournament_path = tournaments_path()
         with tournament_path.joinpath(deck["nome_file"]).open("a") as file:
             file.write(f"{tournament['tournament_name']}"
-                       f"\n{tournament['result'][0]}"
-                       f"\n{tournament['result'][2]}"
-                       f"\n{tournament['result'][4]}"
+                       f"\n{tournament['win']}"
+                       f"\n{tournament['lose']}"
+                       f"\n{tournament['tie']}"
                        f"\n{tournament['position']}\n")
 
         break
@@ -345,7 +364,10 @@ def print_tournament(tornei, decks):
             if t["nome_file"] == d["nome_file"]:
                 zipped = zip(t['torneo'], t['win'], t['lose'], t['tie'], t['posizione'])
                 for torneo, win, lose, tie, posizione in zipped:
-                    print(f"torneo: {torneo}, win-lose-tie: {win}-{lose}-{tie}, posizione: {posizione}, mazzo:{d['nome']}")
+                    print(f"torneo: {torneo},"
+                          f" win-lose-tie: {win}-{lose}-{tie},"
+                          f" posizione: {posizione},"
+                          f" mazzo:{d['nome']}")
     print("---")
 
 
@@ -378,7 +400,7 @@ def elabora_scelta_utente(choose):
     elif choose == 10:
         decks = read_decks_from_disk()
         tournament = read_tournament_from_disk()
-        print_tournament(tournament,decks)
+        print_tournament(tournament, decks)
 
 
 while True:
