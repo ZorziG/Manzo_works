@@ -102,17 +102,16 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
                 print("Prezzo non Valido")
                 continue
 
-        with open(deck_filename(my_deck["nome"]), "w") as file:
+        with open(deck_filename(), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
 
 
-def deck_filename(nome):
+def deck_filename():
     deck_path = decks_path()
     random_name = str(uuid.uuid4())
-    right_name = nome + "_" + random_name
-    return deck_path.joinpath(right_name)
+    return deck_path.joinpath(random_name)
 
 
 def incrementing_tournament_filename(nome):
