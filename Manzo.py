@@ -1,4 +1,5 @@
 from pathlib import Path
+import uuid
 
 
 def create_directory():  # creare una cartella
@@ -27,6 +28,7 @@ def show_main_menu():
 8) Search
 9) Enter deck result
 10) View all tournament
+11) Remove Tournament
    ---"""
     print(menu)
 
@@ -41,15 +43,13 @@ def show_menu1():
         decks = read_decks_from_disk()
         print_deck_index(decks)
         tournament_path = tournaments_path()
+        tournament = read_tournament_from_disk()
         deck = choose_deck(decks)
         if deck == 0:
             return
         elif deck:
             if tournament_path.joinpath(deck["nome_file"]).exists():
-                print(read_decks_from_disk())
-                print(read_tournament_from_disk())
-                x = read_tournament_from_disk()
-                print_tournament(x, decks)
+                print_tournament(tournament, decks)  # devo trovare il modo di printare solo queli scelti
 
 
 def scelta_utente():
@@ -102,21 +102,28 @@ def add_deck():  # creare un file e aggiungere mazzo,formato,prezzo uno per line
                 print("Prezzo non Valido")
                 continue
 
-        with open(incrementing_deck_filename(my_deck["nome"]), "w") as file:
+        with open(deck_filename(my_deck["nome"]), "w") as file:
             file.write(f"{my_deck['nome']}\n{my_deck['formato']}\n{my_deck['prezzo']}")
 
         break
 
 
-def incrementing_deck_filename(nome):
+def deck_filename(nome):
     deck_path = decks_path()
+    random_name = str(uuid.uuid4())
+    right_name = nome + "_" + random_name
+    return deck_path.joinpath(right_name)
+
+
+def incrementing_tournament_filename(nome):
+    tournament_path = tournaments_path()
     i = 1
-    if not deck_path.joinpath(nome).exists():
-        return deck_path.joinpath(nome)
+    if not tournament_path.joinpath(nome).exists():
+        return tournament_path.joinpath(nome)
     else:
-        while deck_path.joinpath(nome + str(i)).exists():
+        while tournament_path.joinpath(nome + "_" + str(i)).exists():
             i += 1
-        return deck_path.joinpath(nome + str(i))
+        return tournament_path.joinpath(nome + "_" + str(i))
 
 
 def read_decks_from_disk():  # leggere un file e aggiungere a un dizionario le 3 linee
@@ -166,6 +173,26 @@ def remove_deck():  # rimuovere un file dalla cartella in base al numero del maz
         else:
             deck_path = decks_path()
             full_file_path = deck_path.joinpath(deck_to_be_deleted["nome_file"])
+            full_file_path.unlink()
+
+
+def remove_tournament():
+    while True:
+        print("\nLista dei mazzi disponibili")
+        exit_mode()
+        decks = read_decks_from_disk()
+        tournament = read_tournament_from_disk()
+        print_tournament_with_index(tournament, decks)
+        try:
+            index = int(input('scegli il mazzo il mazzo da cancellare: '))
+            if index == 0:
+                return
+            tournament_to_be_deleted = tournament[index - 1]
+        except IndexError as e:
+            print('il mazzo non esiste!', e)
+        else:
+            tournament_path = tournaments_path()
+            full_file_path = tournament_path.joinpath(tournament_to_be_deleted["nome_file"])
             full_file_path.unlink()
 
 
@@ -249,7 +276,7 @@ def edit_price(deck):
         file1.writelines(data)
 
 
-def modify_name():  # modificare il nome del file, nome del mazzo, formato o il prezzo, bisogna capire come uscire
+def modify_info():  # modificare il nome del file, nome del mazzo, formato o il prezzo, bisogna capire come uscire
     while True:
         print("\nLista dei mazzi disponibili")
         exit_mode()
@@ -327,8 +354,7 @@ def tournament_result(deck):
             tournament["position"] = position
             break
 
-        tournament_path = tournaments_path()
-        with tournament_path.joinpath(deck["nome_file"]).open("a") as file:
+        with open(incrementing_tournament_filename(deck["nome_file"]), "w") as file:
             file.write(f"{tournament['tournament_name']}"
                        f"\n{tournament['win']}"
                        f"\n{tournament['lose']}"
@@ -347,11 +373,11 @@ def read_tournament_from_disk():
                 tournament_info = file.read().splitlines()
                 d = {
                     "nome_file": filename.name,
-                    "torneo": tournament_info[0::5],
-                    "win": tournament_info[1::5],
-                    "lose": tournament_info[2::5],
-                    "tie": tournament_info[3::5],
-                    "posizione": tournament_info[4::5]
+                    "torneo": tournament_info[0],
+                    "win": tournament_info[1],
+                    "lose": tournament_info[2],
+                    "tie": tournament_info[3],
+                    "posizione": tournament_info[4]
                 }
                 tournament_list.append(d)
 
@@ -361,20 +387,32 @@ def read_tournament_from_disk():
 def print_tournament(tornei, decks):
     for t in tornei:
         for d in decks:
-            if t["nome_file"] == d["nome_file"]:
-                zipped = zip(t['torneo'], t['win'], t['lose'], t['tie'], t['posizione'])
-                for torneo, win, lose, tie, posizione in zipped:
-                    print(f"torneo: {torneo},"
-                          f" win-lose-tie: {win}-{lose}-{tie},"
-                          f" posizione: {posizione},"
-                          f" mazzo:{d['nome']}")
-    print("---")
+            if d["nome_file"] in t["nome_file"]:
+                print(f"torneo: {t['torneo']},"
+                      f" win-lose-tie: {t['win']}-{t['lose']}-{t['tie']},"
+                      f" prezzo: {t['posizione']},"
+                      f" mazzo: {d['nome']} ")
+
+    print("   ---")
+
+
+def print_tournament_with_index(tornei, decks):
+    for index, t in enumerate(tornei, 1):
+        for d in decks:
+            if d["nome_file"] in t["nome_file"]:
+                print(f"{index})"
+                      f"torneo: {t['torneo']},"
+                      f" win-lose-tie: {t['win']}-{t['lose']}-{t['tie']},"
+                      f" prezzo: {t['posizione']},"
+                      f" mazzo: {d['nome']} ")
+
+    print("   ---")
 
 
 def elabora_scelta_utente(choose):
     if choose == 1:
         show_menu1()
-    elif choose == 2 or choose > 11:
+    elif choose == 2 or choose > 16:
         print("scelta al momento non disponibile")
     elif choose == 3:
         add_deck()
@@ -389,7 +427,7 @@ def elabora_scelta_utente(choose):
         format_pioneer = choose_format_deck(decks, "Pioneer")
         print_deck_index(format_pioneer)
     elif choose == 7:
-        modify_name()
+        modify_info()
     elif choose == 8:
         looking_for_a_word()
     elif choose == 9:
@@ -401,6 +439,8 @@ def elabora_scelta_utente(choose):
         decks = read_decks_from_disk()
         tournament = read_tournament_from_disk()
         print_tournament(tournament, decks)
+    elif choose == 11:
+        remove_tournament()
 
 
 while True:
